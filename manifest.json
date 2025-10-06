@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Curtains",
+  "version": "1.0.0",
+  "description": "Hide web pages behind a curtain overlay with a reveal button.",
+  "permissions": ["storage", "activeTab"],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "toggle-curtain": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Toggle curtain overlay"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
