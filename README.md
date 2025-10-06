@@ -49,6 +49,15 @@ npm run format        # Format code
 4. Click "Load unpacked"
 5. Select the `dist/` folder
 
+### Making Keyboard Shortcuts Global (Recommended)
+
+By default, keyboard shortcuts only work within the browser. To make them work globally (even when the browser is in the background):
+
+1. Go to `chrome://extensions/shortcuts`
+2. Find "Curtains" extension
+3. Change the scope from "In Chrome/Chromium" to "Global"
+4. Now `Command+Shift+H` (Mac) or `Ctrl+Shift+H` (Windows/Linux) works system-wide
+
 ## Features
 
 - **Per-domain blocking**: Block youtube.com once, it's blocked in all tabs
