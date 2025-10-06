@@ -2,9 +2,14 @@
 
 Block distracting websites so you can focus on your work.
 
-## Development
+## Tech Stack
 
-This extension is built with **TypeScript** for better type safety and developer experience.
+- **TypeScript** - Type-safe development
+- **Vite** - Fast builds with HMR  
+- **Biome** - Lightning-fast linting & formatting
+- **Vanilla DOM** - Zero framework overhead
+
+## Development
 
 ### Setup
 
@@ -12,53 +17,37 @@ This extension is built with **TypeScript** for better type safety and developer
 npm install
 ```
 
-### Build
+### Development Mode (with HMR)
 
-Compile TypeScript to JavaScript:
+```bash
+npm run dev
+```
+
+Auto-reloads on file changes. The fastest way to develop.
+
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-### Watch Mode (Development)
+Optimized build output in `dist/` folder.
 
-Auto-compile on file changes:
+### Linting & Formatting
 
 ```bash
-npm run watch
-```
-
-Keep this running in a terminal while developing. The compiled JavaScript files will be output to the `dist/` folder.
-
-### Project Structure
-
-```
-chrome/
-├── src/                    # TypeScript source files
-│   ├── content.ts          # Content script (injected into pages)
-│   ├── service_worker.ts   # Background service worker
-│   └── popup.ts            # Popup UI logic
-├── dist/                   # Compiled JavaScript (auto-generated)
-├── icons/                  # Extension icons
-├── manifest.json           # Extension manifest
-├── popup.html              # Popup UI
-├── content.css            # Content script styles
-└── tsconfig.json          # TypeScript configuration
+npm run lint          # Check for issues
+npm run lint:fix      # Fix issues automatically  
+npm run format        # Format code
 ```
 
 ## Loading the Extension
 
-1. Build the extension: `npm run build`
+1. Build: `npm run build`
 2. Go to `chrome://extensions/`
 3. Enable "Developer mode"
 4. Click "Load unpacked"
-5. Select this directory
-
-## Usage
-
-- **Click the eye button** on any page to toggle the curtain
-- **Keyboard shortcut**: `Ctrl+Shift+H` (Windows/Linux) or `Command+Shift+H` (Mac)
-- **Popup**: Click the extension icon for quick controls
+5. Select the `dist/` folder
 
 ## Features
 
@@ -66,11 +55,12 @@ chrome/
 - **Persistent state**: Blocked sites stay blocked across browser restarts
 - **Auto-sync**: Block a site in one tab, all tabs with that domain are blocked
 - **Tab muting**: Blocked tabs are automatically muted
-- **Keyboard shortcuts**: Quick toggle with customizable shortcuts
+- **Keyboard shortcuts**: `Ctrl+Shift+H` (Windows/Linux) or `Command+Shift+H` (Mac)
 
-## TypeScript Benefits
+## Why This Stack?
 
-- ✅ Type safety - catch bugs at compile time
-- ✅ IntelliSense - better autocomplete in VS Code
-- ✅ Chrome API types included
-- ✅ No runtime performance impact (compiles to plain JavaScript)
+- ✅ **Minimal code** - No framework bloat
+- ✅ **Type safety** - Catch bugs before runtime
+- ✅ **Fast builds** - Vite is 10-100x faster than Webpack
+- ✅ **Modern tooling** - HMR, optimized bundles
+- ✅ **Best DX** - Biome is 100x faster than ESLint

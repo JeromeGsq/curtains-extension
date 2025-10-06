@@ -1,0 +1,6 @@
+{
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "package.json": "vite.config.ts,tsconfig.json,package-lock.json,biome.json"
+    },
+}

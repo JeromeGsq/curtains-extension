@@ -1,6 +1,6 @@
-(function() {
-  'use strict';
+import './content.css';
 
+(() => {
   let curtainState: boolean | null = null; // null = unknown, true = shown, false = hidden
 
   // Create curtain overlay (start hidden by default to prevent flash)
@@ -10,12 +10,27 @@
     const overlay = document.createElement('div');
     overlay.id = 'curtain-overlay';
     overlay.className = 'hidden'; // Start hidden to prevent flash
-    overlay.innerHTML = `
-      <div id="curtain-message">
-        This site is blocked<br>so you can focus on your work
-      </div>
-    `;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.id = 'curtain-message';
+    messageDiv.textContent = 'This site is blocked';
+
+    const lineBreak = document.createElement('br');
+    messageDiv.appendChild(lineBreak);
+
+    const secondLine = document.createTextNode('so you can focus on your work');
+    messageDiv.appendChild(secondLine);
+
+    overlay.appendChild(messageDiv);
     document.documentElement.appendChild(overlay);
+  }
+
+  // Helper to create image element for button
+  function createButtonImage(iconPath: string): HTMLImageElement {
+    const img = document.createElement('img');
+    img.src = chrome.runtime.getURL(iconPath);
+    img.alt = 'Toggle';
+    return img;
   }
 
   // Create floating toggle button
@@ -24,12 +39,23 @@
 
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'curtain-toggle-btn';
-    toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
+    toggleBtn.appendChild(createButtonImage('icons/hidden-48.png'));
     document.documentElement.appendChild(toggleBtn);
 
     toggleBtn.addEventListener('click', () => {
       toggleCurtain();
     });
+  }
+
+  // Update button icon
+  function updateButtonIcon(button: HTMLElement, iconPath: string): void {
+    button.textContent = ''; // Clear existing content
+    try {
+      button.appendChild(createButtonImage(iconPath));
+    } catch (_e) {
+      // Extension context invalidated - use fallback emoji
+      button.textContent = '👁️';
+    }
   }
 
   // Show curtain
@@ -39,7 +65,7 @@
     const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.remove('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/visible-48.png') + '" alt="Toggle" />';
+    if (toggleBtn) updateButtonIcon(toggleBtn, 'icons/visible-48.png');
 
     // Disable scrolling
     document.documentElement.style.overflow = 'hidden';
@@ -51,10 +77,12 @@
         action: 'setState',
         url: window.location.href,
         state: true,
-        mute: true
+        mute: true,
       });
-    } catch (e) {
-      console.log('Curtains: Extension context invalidated, please reload the page');
+    } catch (_e) {
+      console.log(
+        'Curtains: Extension context invalidated, please reload the page',
+      );
     }
   }
 
@@ -65,14 +93,7 @@
     const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.add('hidden');
-    if (toggleBtn) {
-      try {
-        toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
-      } catch (e) {
-        // Extension context invalidated - use fallback emoji
-        toggleBtn.innerHTML = '👁️';
-      }
-    }
+    if (toggleBtn) updateButtonIcon(toggleBtn, 'icons/hidden-48.png');
 
     // Re-enable scrolling
     document.documentElement.style.overflow = '';
@@ -85,10 +106,12 @@
           action: 'setState',
           url: window.location.href,
           state: false,
-          mute: false
+          mute: false,
         });
-      } catch (e) {
-        console.log('Curtains: Extension context invalidated, please reload the page');
+      } catch (_e) {
+        console.log(
+          'Curtains: Extension context invalidated, please reload the page',
+        );
       }
     }
   }
@@ -109,35 +132,42 @@
 
     // Request saved state from service worker
     try {
-      chrome.runtime.sendMessage({
-        action: 'getState',
-        url: window.location.href
-      }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.log('Curtains: Extension context invalidated, defaulting to visible');
-          hideCurtain(true);
-          return;
-        }
-        if (response && response.state !== undefined) {
-          curtainState = response.state;
-          if (curtainState) {
-            showCurtain();
+      chrome.runtime.sendMessage(
+        {
+          action: 'getState',
+          url: window.location.href,
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.log(
+              'Curtains: Extension context invalidated, defaulting to visible',
+            );
+            hideCurtain(true);
+            return;
+          }
+          if (response && response.state !== undefined) {
+            curtainState = response.state;
+            if (curtainState) {
+              showCurtain();
+            } else {
+              hideCurtain(true);
+            }
           } else {
+            // Default: hide curtain (show website)
             hideCurtain(true);
           }
-        } else {
-          // Default: hide curtain (show website)
-          hideCurtain(true);
-        }
-      });
-    } catch (e) {
-      console.log('Curtains: Extension context invalidated, defaulting to visible');
+        },
+      );
+    } catch (_e) {
+      console.log(
+        'Curtains: Extension context invalidated, defaulting to visible',
+      );
       hideCurtain(true);
     }
   }
 
   // Listen for messages from service worker
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.action === 'toggleCurtain') {
       toggleCurtain();
       sendResponse({ success: true });
@@ -151,25 +181,13 @@
       if (curtainState) {
         // Show curtain (without sending message)
         if (overlay) overlay.classList.remove('hidden');
-        if (toggleBtn) {
-          try {
-            toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/visible-48.png') + '" alt="Toggle" />';
-          } catch (e) {
-            toggleBtn.innerHTML = '👁️';
-          }
-        }
+        if (toggleBtn) updateButtonIcon(toggleBtn, 'icons/visible-48.png');
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
       } else {
         // Hide curtain (without sending message)
         if (overlay) overlay.classList.add('hidden');
-        if (toggleBtn) {
-          try {
-            toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
-          } catch (e) {
-            toggleBtn.innerHTML = '👁️';
-          }
-        }
+        if (toggleBtn) updateButtonIcon(toggleBtn, 'icons/hidden-48.png');
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
       }

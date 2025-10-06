@@ -11,7 +11,7 @@ function extractDomain(url: string): string | null {
   try {
     const urlObj = new URL(url);
     return urlObj.hostname;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -40,12 +40,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       // Notify OTHER tabs with same domain to update their state (exclude sender)
       chrome.tabs.query({}, (tabs) => {
-        tabs.forEach(tab => {
-          if (tab.id && tab.id !== tabId && tab.url && extractDomain(tab.url) === domain) {
-            chrome.tabs.sendMessage(tab.id, {
-              action: 'updateState',
-              state: message.state
-            }).catch(() => {}); // Ignore errors for tabs that don't have content script
+        tabs.forEach((tab) => {
+          if (
+            tab.id &&
+            tab.id !== tabId &&
+            tab.url &&
+            extractDomain(tab.url) === domain
+          ) {
+            chrome.tabs
+              .sendMessage(tab.id, {
+                action: 'updateState',
+                state: message.state,
+              })
+              .catch(() => {}); // Ignore errors for tabs that don't have content script
           }
         });
       });
