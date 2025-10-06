@@ -3,7 +3,6 @@
   "name": "Curtains - Focus & Block Distractions",
   "version": "1.0.0",
   "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
-  "author": "Jerome Gasquez",
   "homepage_url": "https://github.com/JeromeGsq/curtains-extension",
   "permissions": ["storage", "activeTab", "tabs"],
   "action": {

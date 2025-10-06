@@ -78,15 +78,6 @@ import './content.css';
     return img;
   }
 
-  // Helper to extract domain from current URL
-  function getCurrentDomain(): string | null {
-    try {
-      return new URL(window.location.href).hostname;
-    } catch (_e) {
-      return null;
-    }
-  }
-
   // Create docked toggle button with hover trigger
   function createToggleButton(): void {
     if (document.getElementById('curtain-toggle-btn')) return;

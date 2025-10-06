@@ -18,8 +18,11 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         // Extract domain for display
         let domain = '';
         try {
-          const urlObj = new URL(tabs[0].url!);
-          domain = urlObj.hostname;
+          const url = tabs[0].url;
+          if (url) {
+            const urlObj = new URL(url);
+            domain = urlObj.hostname;
+          }
         } catch (_e) {
           domain = 'this page';
         }
@@ -33,7 +36,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             statusEl.className = 'status visible';
           }
         }
-      },
+      }
     );
   }
 });
@@ -43,17 +46,12 @@ const toggleBtn = document.getElementById('toggleBtn');
 if (toggleBtn) {
   toggleBtn.addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(
-          tabs[0].id!,
-          { action: 'toggleCurtain' },
-          () => {
-            // Close popup after toggling
-            window.close();
-          },
-        );
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleCurtain' }, () => {
+          // Close popup after toggling
+          window.close();
+        });
       }
     });
   });
 }
-
