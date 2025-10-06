@@ -6,15 +6,24 @@ document.getElementById('shortcut').textContent = shortcutText;
 // Get current tab state and update UI
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
   if (tabs[0]) {
-    chrome.runtime.sendMessage({ action: 'getState', tabId: tabs[0].id }, (response) => {
+    chrome.runtime.sendMessage({ action: 'getState', url: tabs[0].url }, (response) => {
       const statusEl = document.getElementById('status');
       const isBlocked = response && response.state === true;
 
+      // Extract domain for display
+      let domain = '';
+      try {
+        const urlObj = new URL(tabs[0].url);
+        domain = urlObj.hostname;
+      } catch (e) {
+        domain = 'this page';
+      }
+
       if (isBlocked) {
-        statusEl.textContent = '🚫 This page is blocked';
+        statusEl.textContent = `🚫 ${domain} is blocked`;
         statusEl.className = 'status blocked';
       } else {
-        statusEl.textContent = '✓ This page is visible';
+        statusEl.textContent = `✓ ${domain} is visible`;
         statusEl.className = 'status visible';
       }
     });

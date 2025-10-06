@@ -46,24 +46,51 @@
     document.body.style.overflow = 'hidden';
 
     // Save state and request tab mute
-    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: true, mute: true });
+    try {
+      chrome.runtime.sendMessage({
+        action: 'setState',
+        url: window.location.href,
+        state: true,
+        mute: true
+      });
+    } catch (e) {
+      console.log('Curtains: Extension context invalidated, please reload the page');
+    }
   }
 
   // Hide curtain
-  function hideCurtain() {
+  function hideCurtain(skipMessage) {
     curtainState = false;
     const overlay = document.getElementById('curtain-overlay');
     const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.add('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
+    if (toggleBtn) {
+      try {
+        toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
+      } catch (e) {
+        // Extension context invalidated - use fallback emoji
+        toggleBtn.innerHTML = '👁️';
+      }
+    }
 
     // Re-enable scrolling
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
 
-    // Save state and request tab unmute
-    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: false, mute: false });
+    // Save state and request tab unmute (skip if called from error handler)
+    if (!skipMessage) {
+      try {
+        chrome.runtime.sendMessage({
+          action: 'setState',
+          url: window.location.href,
+          state: false,
+          mute: false
+        });
+      } catch (e) {
+        console.log('Curtains: Extension context invalidated, please reload the page');
+      }
+    }
   }
 
   // Toggle curtain
@@ -81,25 +108,71 @@
     createToggleButton();
 
     // Request saved state from service worker
-    chrome.runtime.sendMessage({ action: 'getState', tabId: 'current' }, (response) => {
-      if (response && response.state !== undefined) {
-        curtainState = response.state;
-        if (curtainState) {
-          showCurtain();
-        } else {
-          hideCurtain();
+    try {
+      chrome.runtime.sendMessage({
+        action: 'getState',
+        url: window.location.href
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.log('Curtains: Extension context invalidated, defaulting to visible');
+          hideCurtain(true);
+          return;
         }
-      } else {
-        // Default: hide curtain (show website)
-        hideCurtain();
-      }
-    });
+        if (response && response.state !== undefined) {
+          curtainState = response.state;
+          if (curtainState) {
+            showCurtain();
+          } else {
+            hideCurtain(true);
+          }
+        } else {
+          // Default: hide curtain (show website)
+          hideCurtain(true);
+        }
+      });
+    } catch (e) {
+      console.log('Curtains: Extension context invalidated, defaulting to visible');
+      hideCurtain(true);
+    }
   }
 
-  // Listen for toggle command from service worker
+  // Listen for messages from service worker
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'toggleCurtain') {
       toggleCurtain();
+      sendResponse({ success: true });
+    } else if (message.action === 'updateState') {
+      // Update curtain state when another tab with same domain toggles
+      // DON'T send message back to avoid infinite loop
+      curtainState = message.state;
+      const overlay = document.getElementById('curtain-overlay');
+      const toggleBtn = document.getElementById('curtain-toggle-btn');
+
+      if (curtainState) {
+        // Show curtain (without sending message)
+        if (overlay) overlay.classList.remove('hidden');
+        if (toggleBtn) {
+          try {
+            toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/visible-48.png') + '" alt="Toggle" />';
+          } catch (e) {
+            toggleBtn.innerHTML = '👁️';
+          }
+        }
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      } else {
+        // Hide curtain (without sending message)
+        if (overlay) overlay.classList.add('hidden');
+        if (toggleBtn) {
+          try {
+            toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
+          } catch (e) {
+            toggleBtn.innerHTML = '👁️';
+          }
+        }
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+      }
       sendResponse({ success: true });
     }
   });
