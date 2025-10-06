@@ -3,12 +3,13 @@
 
   let curtainState = null; // null = unknown, true = shown, false = hidden
 
-  // Create curtain overlay
+  // Create curtain overlay (start hidden by default to prevent flash)
   function createCurtain() {
     if (document.getElementById('curtain-overlay')) return;
 
     const overlay = document.createElement('div');
     overlay.id = 'curtain-overlay';
+    overlay.className = 'hidden'; // Start hidden to prevent flash
     overlay.innerHTML = `
       <div id="curtain-message">
         This site is blocked<br>so you can focus on your work
@@ -23,7 +24,7 @@
 
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'curtain-toggle-btn';
-    toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('hidden-48.png') + '" alt="Toggle" />';
+    toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
     document.documentElement.appendChild(toggleBtn);
 
     toggleBtn.addEventListener('click', () => {
@@ -38,14 +39,14 @@
     const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.remove('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('visible-48.png') + '" alt="Toggle" />';
+    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/visible-48.png') + '" alt="Toggle" />';
 
     // Disable scrolling
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
-    // Save state
-    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: true });
+    // Save state and request tab mute
+    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: true, mute: true });
   }
 
   // Hide curtain
@@ -55,14 +56,14 @@
     const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.add('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('hidden-48.png') + '" alt="Toggle" />';
+    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('icons/hidden-48.png') + '" alt="Toggle" />';
 
     // Re-enable scrolling
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
 
-    // Save state
-    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: false });
+    // Save state and request tab unmute
+    chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: false, mute: false });
   }
 
   // Toggle curtain

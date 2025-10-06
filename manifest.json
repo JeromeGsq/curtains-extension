@@ -3,7 +3,7 @@
   "name": "Curtains",
   "version": "1.0.0",
   "description": "Hide web pages behind a curtain overlay with a reveal button.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -40,7 +40,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["visible-48.png", "hidden-48.png"],
+      "resources": ["icons/visible-48.png", "icons/hidden-48.png"],
       "matches": ["<all_urls>"]
     }
   ]

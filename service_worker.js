@@ -7,6 +7,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const tabId = sender.tab?.id;
     if (tabId) {
       tabStates.set(tabId, message.state);
+
+      // Mute or unmute the tab based on the message
+      if (message.mute !== undefined) {
+        chrome.tabs.update(tabId, { muted: message.mute });
+      }
+
       sendResponse({ success: true });
     }
   } else if (message.action === 'getState') {
