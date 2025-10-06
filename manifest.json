@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Curtains",
+  "name": "Curtains - Focus & Block Distractions",
   "version": "1.0.0",
-  "description": "Hide web pages behind a curtain overlay with a reveal button.",
+  "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
+  "author": "Jerome Gasquez",
+  "homepage_url": "https://github.com/JeromeGsq/curtains-extension",
   "permissions": ["storage", "activeTab", "tabs"],
   "action": {
     "default_popup": "popup.html",

@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "package": "npm run build && cd dist && zip -r ../curtains-v1.0.0.zip . && cd .. && echo 'Package created: curtains-v1.0.0.zip'",
     "lint": "biome check src/",
     "lint:fix": "biome check --write src/",
     "format": "biome format --write src/"
