@@ -1,7 +1,6 @@
-import './content.css';
-
 (() => {
   let curtainState: boolean | null = null; // null = unknown, true = shown, false = hidden
+  let shadowRoot: ShadowRoot | null = null;
 
   // Motivational phrases
   const motivationalPhrases = [
@@ -26,13 +25,133 @@ import './content.css';
     'You control the curtain. You control your time.',
   ];
 
+  // CSS styles (embedded in Shadow DOM)
+  const styles = `
+    /* Curtain overlay */
+    #curtain-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #2c2c2c;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    #curtain-overlay.hidden {
+      display: none;
+    }
+
+    #curtain-content {
+      text-align: center;
+    }
+
+    #curtain-message {
+      font-size: 28px;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    #curtain-motivation {
+      font-size: 16px;
+      color: #a0a0a0;
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 30px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #curtain-resume-btn {
+      background: #e0e0e0;
+      color: #1a1a1a;
+      border: none;
+      padding: 12px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    #curtain-resume-btn:hover {
+      background: #f5f5f5;
+    }
+
+    /* Docked toggle button */
+    #curtain-toggle-btn {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      cursor: pointer;
+      z-index: 2147483648;
+      transition: transform 0.3s ease, background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top-right-radius: 8px;
+      transform: translateX(-100%);
+    }
+
+    #curtain-toggle-btn:hover,
+    #curtain-toggle-btn.visible {
+      transform: translateX(0);
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    #curtain-toggle-btn img {
+      width: 20px;
+      height: 20px;
+      filter: invert(1);
+    }
+
+    /* Hover trigger area */
+    #curtain-hover-trigger {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 100px;
+      z-index: 2147483647;
+      pointer-events: auto;
+    }
+  `;
+
   // Create curtain overlay (start hidden by default to prevent flash)
   function createCurtain(): void {
-    if (document.getElementById('curtain-overlay')) return;
+    if (document.getElementById('curtain-shadow-host')) return;
 
+    // Create shadow host
+    const shadowHost = document.createElement('div');
+    shadowHost.id = 'curtain-shadow-host';
+    shadowHost.style.cssText =
+      'all: initial; position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2147483647;';
+
+    // Attach shadow DOM
+    shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+
+    // Add styles to shadow DOM
+    const styleElement = document.createElement('style');
+    styleElement.textContent = styles;
+    shadowRoot.appendChild(styleElement);
+
+    // Create overlay
     const overlay = document.createElement('div');
     overlay.id = 'curtain-overlay';
-    overlay.className = 'hidden'; // Start hidden to prevent flash
+    overlay.className = 'hidden';
+    overlay.style.pointerEvents = 'auto';
 
     const contentDiv = document.createElement('div');
     contentDiv.id = 'curtain-content';
@@ -67,7 +186,8 @@ import './content.css';
     contentDiv.appendChild(motivationDiv);
     contentDiv.appendChild(resumeBtn);
     overlay.appendChild(contentDiv);
-    document.documentElement.appendChild(overlay);
+    shadowRoot.appendChild(overlay);
+    document.documentElement.appendChild(shadowHost);
   }
 
   // Helper to create image element for button
@@ -80,7 +200,7 @@ import './content.css';
 
   // Create docked toggle button with hover trigger
   function createToggleButton(): void {
-    if (document.getElementById('curtain-toggle-btn')) return;
+    if (!shadowRoot || shadowRoot.getElementById('curtain-toggle-btn')) return;
 
     // Create hover trigger area
     const hoverTrigger = document.createElement('div');
@@ -108,8 +228,8 @@ import './content.css';
       toggleBtn.classList.remove('visible');
     });
 
-    document.documentElement.appendChild(hoverTrigger);
-    document.documentElement.appendChild(toggleBtn);
+    shadowRoot.appendChild(hoverTrigger);
+    shadowRoot.appendChild(toggleBtn);
 
     toggleBtn.addEventListener('click', () => {
       toggleCurtain();
@@ -129,7 +249,8 @@ import './content.css';
 
   // Update motivational phrase with a random one
   function updateMotivationalPhrase(): void {
-    const motivationDiv = document.getElementById('curtain-motivation');
+    if (!shadowRoot) return;
+    const motivationDiv = shadowRoot.getElementById('curtain-motivation');
     if (motivationDiv) {
       const randomPhrase =
         motivationalPhrases[
@@ -141,9 +262,10 @@ import './content.css';
 
   // Show curtain
   function showCurtain(): void {
+    if (!shadowRoot) return;
     curtainState = true;
-    const overlay = document.getElementById('curtain-overlay');
-    const toggleBtn = document.getElementById('curtain-toggle-btn');
+    const overlay = shadowRoot.getElementById('curtain-overlay');
+    const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
 
     // Update motivational phrase each time curtain is shown
     updateMotivationalPhrase();
@@ -172,9 +294,10 @@ import './content.css';
 
   // Hide curtain
   function hideCurtain(skipMessage?: boolean): void {
+    if (!shadowRoot) return;
     curtainState = false;
-    const overlay = document.getElementById('curtain-overlay');
-    const toggleBtn = document.getElementById('curtain-toggle-btn');
+    const overlay = shadowRoot.getElementById('curtain-overlay');
+    const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.add('hidden');
     if (toggleBtn) updateButtonIcon(toggleBtn, 'icons/hidden-48.png');
@@ -258,9 +381,13 @@ import './content.css';
     } else if (message.action === 'updateState') {
       // Update curtain state when another tab with same domain toggles
       // DON'T send message back to avoid infinite loop
+      if (!shadowRoot) {
+        sendResponse({ success: false });
+        return;
+      }
       curtainState = message.state;
-      const overlay = document.getElementById('curtain-overlay');
-      const toggleBtn = document.getElementById('curtain-toggle-btn');
+      const overlay = shadowRoot.getElementById('curtain-overlay');
+      const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
 
       if (curtainState) {
         // Show curtain (without sending message)
@@ -278,7 +405,11 @@ import './content.css';
       sendResponse({ success: true });
     } else if (message.action === 'updateButtonPosition') {
       // Update button position
-      const toggleBtn = document.getElementById('curtain-toggle-btn');
+      if (!shadowRoot) {
+        sendResponse({ success: false });
+        return;
+      }
+      const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
       if (toggleBtn) {
         toggleBtn.className = `position-${message.position}`;
       }
