@@ -10,28 +10,24 @@
     const overlay = document.createElement('div');
     overlay.id = 'curtain-overlay';
     overlay.innerHTML = `
-      <div id="curtain-message">Curtain closed</div>
-      <button id="curtain-reveal-btn">Reveal Page</button>
+      <div id="curtain-message">
+        This site is blocked<br>so you can focus on your work
+      </div>
     `;
     document.documentElement.appendChild(overlay);
-
-    document.getElementById('curtain-reveal-btn').addEventListener('click', () => {
-      hideCurtain();
-    });
   }
 
-  // Create floating hide button
-  function createHideButton() {
-    if (document.getElementById('curtain-hide-btn')) return;
+  // Create floating toggle button
+  function createToggleButton() {
+    if (document.getElementById('curtain-toggle-btn')) return;
 
-    const hideBtn = document.createElement('button');
-    hideBtn.id = 'curtain-hide-btn';
-    hideBtn.textContent = 'Hide Page';
-    hideBtn.className = 'hidden';
-    document.documentElement.appendChild(hideBtn);
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'curtain-toggle-btn';
+    toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('hidden-48.png') + '" alt="Toggle" />';
+    document.documentElement.appendChild(toggleBtn);
 
-    hideBtn.addEventListener('click', () => {
-      showCurtain();
+    toggleBtn.addEventListener('click', () => {
+      toggleCurtain();
     });
   }
 
@@ -39,10 +35,10 @@
   function showCurtain() {
     curtainState = true;
     const overlay = document.getElementById('curtain-overlay');
-    const hideBtn = document.getElementById('curtain-hide-btn');
+    const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.remove('hidden');
-    if (hideBtn) hideBtn.classList.add('hidden');
+    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('visible-48.png') + '" alt="Toggle" />';
 
     // Save state
     chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: true });
@@ -52,10 +48,10 @@
   function hideCurtain() {
     curtainState = false;
     const overlay = document.getElementById('curtain-overlay');
-    const hideBtn = document.getElementById('curtain-hide-btn');
+    const toggleBtn = document.getElementById('curtain-toggle-btn');
 
     if (overlay) overlay.classList.add('hidden');
-    if (hideBtn) hideBtn.classList.remove('hidden');
+    if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('hidden-48.png') + '" alt="Toggle" />';
 
     // Save state
     chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: false });
@@ -73,7 +69,7 @@
   // Initialize curtain based on saved state
   function initializeCurtain() {
     createCurtain();
-    createHideButton();
+    createToggleButton();
 
     // Request saved state from service worker
     chrome.runtime.sendMessage({ action: 'getState', tabId: 'current' }, (response) => {
