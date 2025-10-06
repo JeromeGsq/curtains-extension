@@ -40,6 +40,10 @@
     if (overlay) overlay.classList.remove('hidden');
     if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('visible-48.png') + '" alt="Toggle" />';
 
+    // Disable scrolling
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
     // Save state
     chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: true });
   }
@@ -52,6 +56,10 @@
 
     if (overlay) overlay.classList.add('hidden');
     if (toggleBtn) toggleBtn.innerHTML = '<img src="' + chrome.runtime.getURL('hidden-48.png') + '" alt="Toggle" />';
+
+    // Re-enable scrolling
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
 
     // Save state
     chrome.runtime.sendMessage({ action: 'setState', tabId: 'current', state: false });
