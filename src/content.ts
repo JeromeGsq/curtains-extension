@@ -205,10 +205,12 @@
     // Create hover trigger area
     const hoverTrigger = document.createElement('div');
     hoverTrigger.id = 'curtain-hover-trigger';
+    hoverTrigger.style.pointerEvents = 'auto'; // Enable pointer events
 
     // Create button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'curtain-toggle-btn';
+    toggleBtn.style.pointerEvents = 'auto'; // Enable pointer events
     toggleBtn.appendChild(createButtonImage('icons/hidden-48.png'));
 
     // Add hover trigger functionality
