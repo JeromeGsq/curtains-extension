@@ -1,3 +1,7 @@
+# Input
+
+Je veux créer une extension Chrome, et plus tard, ça sera une extension Firefox. Le but, c'est quand je suis sur une page Internet, que je puisse cacher complètement la page avec quelque chose en overlay qui intercepte les interactions au clic, mais aussi affiche un grand panneau blanc, par exemple, indiquant que le rideau est fermé, parce que l'extension doit me permettre de ne pas voir le contenu. J'ai un petit bouton qui me permet de cliquer dessus pour cacher ce rideau et continuer à naviguer, et il faut toujours un petit bouton ou un raccourci clavier qui me permettent de recacher cet écran. Ça va être une extension Chrome. Donne moi les indications à donner à mon LLM de développeur pour créer cette extension de zéro. En anglais.
+
 # Developer prompt + spec (English)
 
 Below is a complete, precise set of instructions you can give to your _developer LLM_ to build a Chrome extension (Manifest V3) from scratch that:
