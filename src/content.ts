@@ -51,7 +51,9 @@ import './content.css';
     const motivationDiv = document.createElement('div');
     motivationDiv.id = 'curtain-motivation';
     const randomPhrase =
-      motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+      motivationalPhrases[
+        Math.floor(Math.random() * motivationalPhrases.length)
+      ];
     motivationDiv.textContent = randomPhrase;
 
     const resumeBtn = document.createElement('button');
@@ -139,7 +141,9 @@ import './content.css';
     const motivationDiv = document.getElementById('curtain-motivation');
     if (motivationDiv) {
       const randomPhrase =
-        motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+        motivationalPhrases[
+          Math.floor(Math.random() * motivationalPhrases.length)
+        ];
       motivationDiv.textContent = randomPhrase;
     }
   }
@@ -170,7 +174,7 @@ import './content.css';
       });
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, please reload the page',
+        'Curtains: Extension context invalidated, please reload the page'
       );
     }
   }
@@ -199,7 +203,7 @@ import './content.css';
         });
       } catch (_e) {
         console.log(
-          'Curtains: Extension context invalidated, please reload the page',
+          'Curtains: Extension context invalidated, please reload the page'
         );
       }
     }
@@ -229,7 +233,7 @@ import './content.css';
         (response) => {
           if (chrome.runtime.lastError) {
             console.log(
-              'Curtains: Extension context invalidated, defaulting to visible',
+              'Curtains: Extension context invalidated, defaulting to visible'
             );
             hideCurtain(true);
             return;
@@ -245,11 +249,11 @@ import './content.css';
             // Default: hide curtain (show website)
             hideCurtain(true);
           }
-        },
+        }
       );
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, defaulting to visible',
+        'Curtains: Extension context invalidated, defaulting to visible'
       );
       hideCurtain(true);
     }
