@@ -1,7 +1,7 @@
 // Store curtain state per tab
 const tabStates = new Map();
 
-// Listen for messages from content scripts
+// Listen for messages from content scripts and popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'setState') {
     const tabId = sender.tab?.id;
@@ -10,7 +10,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: true });
     }
   } else if (message.action === 'getState') {
-    const tabId = sender.tab?.id;
+    // Handle both content script (sender.tab.id) and popup (message.tabId) requests
+    const tabId = sender.tab?.id || message.tabId;
     if (tabId) {
       const state = tabStates.get(tabId);
       sendResponse({ state: state !== undefined ? state : false }); // default to false (curtain hidden, website visible)
