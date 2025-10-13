@@ -1,12 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Vite Dev Mode</title>
-    <script src="/assets/loading-page-50f7f3a6.js" type="module"></script>
-  </head>
-  <body
-    style="font-family: Arial, sans-serif; padding: 20px; text-align: center"
-  >
-    <h1>Vite Dev Mode</h1>
-  </body>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Curtains</title>
+  <style>
+    body {
+      width: 600px;
+      min-height: 400px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+    }
+
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+ 
+    h1 {
+      font-size: 20px;
+      margin: 0 0 15px 0;
+      color: #333;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #666;
+      margin: 0 0 15px 0;
+    }
+
+    .shortcut {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .shortcut-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .shortcut-key {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .button {
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .button:hover {
+      background: #d0d0d0;
+    }
+
+    .status {
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .status.blocked {
+      background: #ffe6e6;
+      color: #c33;
+    }
+
+    .status.visible {
+      background: #e6f7e6;
+      color: #3c3;
+    }
+
+    .corner-btn:hover {
+      background: #f0f0f0 !important;
+      transform: scale(1.1);
+    }
+
+    .corner-btn.selected {
+      background: #e0e0e0 !important;
+      border-color: #999 !important;
+    }
+
+    .corner-btn.selected img {
+      filter: invert(0) !important;
+    }
+
+    .corner-btn.selected:hover {
+      background: #d0d0d0 !important;
+    }
+
+    .theme-btn:hover {
+      background: #f5f5f5 !important;
+    }
+
+    .theme-btn.selected {
+      background: #e0e0e0 !important;
+      color: #333 !important;
+      border-color: #999 !important;
+    }
+
+    .theme-btn.selected:hover {
+      background: #d0d0d0 !important;
+    }
+
+    #configureShortcut:hover {
+      background: #f5f5f5 !important;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/popup.html-B1tEztLl.js"></script>
+</head>
+<body>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center;">
+      <img src="data:image/png;base64,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" alt="Curtains" style="width: 32px; height: 32px; margin-right: 10px;">
+      <h1 style="margin: 0;">Curtains</h1>
+    </div>
+    <span id="version" style="font-size: 12px; color: #999;"></span>
+  </div>
+
+  <div class="container">
+    <div class="left-column">
+      <p style="margin: 0 0 20px 0;">Block distracting websites so you can focus on your work.</p>
+
+      <div style="margin-top: auto; padding-top: 20px; text-align: center;">
+        <p style="font-size: 13px; color: #666; margin: 0 0 12px 0;">
+          Enjoying Curtains? Support the development with a coffee!
+        </p>
+        <a href="https://buymeacoffee.com/jeromegsq" target="_blank" style="display: inline-block; text-decoration: none; background: #FFDD00; color: #000; padding: 10px 15px; border-radius: 6px; font-size: 14px; font-weight: 500; transition: background 0.2s;">
+          ☕ Buy Me a Coffee
+        </a>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="shortcut">
+        <div class="shortcut-label">Eye Button Position</div>
+        <div id="positionSelector" style="margin-top: 12px; display: flex; justify-content: center; align-items: center; padding: 20px;">
+          <div style="position: relative; width: 200px; height: 120px; border: 3px solid #ddd; border-radius: 8px; background: #fafafa;">
+            <!-- Top Left -->
+            <button class="corner-btn" data-position="top-left" style="position: absolute; top: 5px; left: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Top Right -->
+            <button class="corner-btn" data-position="top-right" style="position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Bottom Left -->
+            <button class="corner-btn" data-position="bottom-left" style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Bottom Right -->
+            <button class="corner-btn" data-position="bottom-right" style="position: absolute; bottom: 5px; right: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shortcut">
+        <div class="shortcut-label">Theme</div>
+        <div id="themeSelector" style="margin-top: 12px; display: flex; gap: 0; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
+          <button class="theme-btn" data-theme="light" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; border-right: 1px solid #ddd; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            Light
+          </button>
+          <button class="theme-btn" data-theme="system" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; border-right: 1px solid #ddd; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            System
+          </button>
+          <button class="theme-btn" data-theme="dark" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            Dark
+          </button>
+        </div>
+      </div>
+
+      <div class="shortcut">
+        <div class="shortcut-label">Keyboard Shortcut</div>
+        <div class="shortcut-key" id="shortcut">Ctrl+Shift+H</div>
+        <button id="configureShortcut" style="margin-top: 8px; padding: 10px 16px; font-size: 14px; font-weight: 500; background: white; color: #333; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+          Configure Shortcut
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
 </html>
