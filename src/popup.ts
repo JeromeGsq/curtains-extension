@@ -1,3 +1,11 @@
+// Display version (build date + commit hash)
+const versionElement = document.getElementById('version');
+if (versionElement) {
+  // Version will be injected at build time
+  const buildVersion = '__BUILD_VERSION__';
+  versionElement.textContent = buildVersion;
+}
+
 // Display the actual configured keyboard shortcut
 const shortcutElement = document.getElementById('shortcut');
 if (shortcutElement) {
