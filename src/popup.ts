@@ -36,7 +36,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             statusEl.className = 'status visible';
           }
         }
-      }
+      },
     );
   }
 });

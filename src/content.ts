@@ -289,7 +289,7 @@
       });
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, please reload the page'
+        'Curtains: Extension context invalidated, please reload the page',
       );
     }
   }
@@ -319,7 +319,7 @@
         });
       } catch (_e) {
         console.log(
-          'Curtains: Extension context invalidated, please reload the page'
+          'Curtains: Extension context invalidated, please reload the page',
         );
       }
     }
@@ -349,7 +349,7 @@
         (response) => {
           if (chrome.runtime.lastError) {
             console.log(
-              'Curtains: Extension context invalidated, defaulting to visible'
+              'Curtains: Extension context invalidated, defaulting to visible',
             );
             hideCurtain(true);
             return;
@@ -365,11 +365,11 @@
             // Default: hide curtain (show website)
             hideCurtain(true);
           }
-        }
+        },
       );
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, defaulting to visible'
+        'Curtains: Extension context invalidated, defaulting to visible',
       );
       hideCurtain(true);
     }

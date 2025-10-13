@@ -1,8 +1,8 @@
 {
-  "name": "chrome",
+  "name": "curtains-extension",
   "version": "1.0.0",
-  "description": "",
-  "main": "content.js",
+  "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
+  "main": "dist/manifest.json",
   "directories": {
     "doc": "docs"
   },
@@ -19,10 +19,16 @@
     "type": "git",
     "url": "git+https://github.com/JeromeGsq/curtains-extension.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "chrome-extension",
+    "productivity",
+    "focus",
+    "website-blocker",
+    "distraction-blocker"
+  ],
+  "author": "JeromeGsq",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/JeromeGsq/curtains-extension/issues"
   },
