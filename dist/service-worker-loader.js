@@ -1,1 +1,3 @@
-import './assets/service_worker.ts-CIbhEhnl.js';
+import 'http://localhost:5174/@vite/env';
+import 'http://localhost:5174/@crx/client-worker';
+import 'http://localhost:5174/src/service_worker.ts';

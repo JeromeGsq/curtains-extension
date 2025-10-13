@@ -2,6 +2,11 @@
   let curtainState: boolean | null = null; // null = unknown, true = shown, false = hidden
   let shadowRoot: ShadowRoot | null = null;
   let themePreference: 'light' | 'dark' | 'system' = 'system';
+  let buttonPosition:
+    | 'bottom-left'
+    | 'bottom-right'
+    | 'top-left'
+    | 'top-right' = 'bottom-left';
 
   // Motivational phrases
   const motivationalPhrases = [
@@ -81,8 +86,6 @@
     /* Docked toggle button */
     #curtain-toggle-btn {
       position: fixed;
-      bottom: 0;
-      left: 0;
       color: white;
       border: none;
       padding: 12px 16px;
@@ -92,12 +95,57 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    /* Position: bottom-left (default) */
+    #curtain-toggle-btn.position-bottom-left {
+      bottom: 0;
+      left: 0;
       border-top-right-radius: 8px;
       transform: translateX(-100%);
     }
 
-    #curtain-toggle-btn:hover,
-    #curtain-toggle-btn.visible {
+    #curtain-toggle-btn.position-bottom-left:hover,
+    #curtain-toggle-btn.position-bottom-left.visible {
+      transform: translateX(0);
+    }
+
+    /* Position: bottom-right */
+    #curtain-toggle-btn.position-bottom-right {
+      bottom: 0;
+      right: 0;
+      border-top-left-radius: 8px;
+      transform: translateX(100%);
+    }
+
+    #curtain-toggle-btn.position-bottom-right:hover,
+    #curtain-toggle-btn.position-bottom-right.visible {
+      transform: translateX(0);
+    }
+
+    /* Position: top-left */
+    #curtain-toggle-btn.position-top-left {
+      top: 0;
+      left: 0;
+      border-bottom-right-radius: 8px;
+      transform: translateX(-100%);
+    }
+
+    #curtain-toggle-btn.position-top-left:hover,
+    #curtain-toggle-btn.position-top-left.visible {
+      transform: translateX(0);
+    }
+
+    /* Position: top-right */
+    #curtain-toggle-btn.position-top-right {
+      top: 0;
+      right: 0;
+      border-bottom-left-radius: 8px;
+      transform: translateX(100%);
+    }
+
+    #curtain-toggle-btn.position-top-right:hover,
+    #curtain-toggle-btn.position-top-right.visible {
       transform: translateX(0);
     }
 
@@ -109,12 +157,30 @@
     /* Hover trigger area */
     #curtain-hover-trigger {
       position: fixed;
-      bottom: 0;
-      left: 0;
       width: 50px;
       height: 100px;
       z-index: 2147483647;
       pointer-events: auto;
+    }
+
+    #curtain-hover-trigger.position-bottom-left {
+      bottom: 0;
+      left: 0;
+    }
+
+    #curtain-hover-trigger.position-bottom-right {
+      bottom: 0;
+      right: 0;
+    }
+
+    #curtain-hover-trigger.position-top-left {
+      top: 0;
+      left: 0;
+    }
+
+    #curtain-hover-trigger.position-top-right {
+      top: 0;
+      right: 0;
     }
 
     /* Light theme */
@@ -355,14 +421,19 @@
     const container = shadowRoot.querySelector('div[class*="theme-"]');
     if (!container) return;
 
+    // Get position class
+    const positionClass = `position-${buttonPosition}`;
+
     // Create hover trigger area
     const hoverTrigger = document.createElement('div');
     hoverTrigger.id = 'curtain-hover-trigger';
+    hoverTrigger.className = positionClass;
     hoverTrigger.style.pointerEvents = 'auto'; // Enable pointer events
 
     // Create button
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'curtain-toggle-btn';
+    toggleBtn.className = positionClass;
     toggleBtn.style.pointerEvents = 'auto'; // Enable pointer events
     toggleBtn.appendChild(createButtonImage('icons/hidden-48.png'));
 
@@ -442,7 +513,7 @@
       });
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, please reload the page',
+        'Curtains: Extension context invalidated, please reload the page'
       );
     }
   }
@@ -472,7 +543,7 @@
         });
       } catch (_e) {
         console.log(
-          'Curtains: Extension context invalidated, please reload the page',
+          'Curtains: Extension context invalidated, please reload the page'
         );
       }
     }
@@ -489,48 +560,55 @@
 
   // Initialize curtain based on saved state
   function initializeCurtain(): void {
-    // First, load theme preference
+    // First, load theme and position preferences
     try {
       chrome.runtime.sendMessage({ action: 'getTheme' }, (themeResponse) => {
         if (themeResponse && themeResponse.theme) {
           themePreference = themeResponse.theme;
         }
 
-        // Now create curtain with the correct theme
-        createCurtain();
-        createToggleButton();
+        // Load button position preference from storage
+        chrome.storage.local.get(['buttonPosition'], (positionResult) => {
+          if (positionResult.buttonPosition) {
+            buttonPosition = positionResult.buttonPosition;
+          }
 
-        // Request saved state from service worker
-        chrome.runtime.sendMessage(
-          {
-            action: 'getState',
-            url: window.location.href,
-          },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.log(
-                'Curtains: Extension context invalidated, defaulting to visible',
-              );
-              hideCurtain(true);
-              return;
-            }
-            if (response && response.state !== undefined) {
-              curtainState = response.state;
-              if (curtainState) {
-                showCurtain();
+          // Now create curtain with the correct theme and position
+          createCurtain();
+          createToggleButton();
+
+          // Request saved state from service worker
+          chrome.runtime.sendMessage(
+            {
+              action: 'getState',
+              url: window.location.href,
+            },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                console.log(
+                  'Curtains: Extension context invalidated, defaulting to visible'
+                );
+                hideCurtain(true);
+                return;
+              }
+              if (response && response.state !== undefined) {
+                curtainState = response.state;
+                if (curtainState) {
+                  showCurtain();
+                } else {
+                  hideCurtain(true);
+                }
               } else {
+                // Default: hide curtain (show website)
                 hideCurtain(true);
               }
-            } else {
-              // Default: hide curtain (show website)
-              hideCurtain(true);
             }
-          },
-        );
+          );
+        });
       });
     } catch (_e) {
       console.log(
-        'Curtains: Extension context invalidated, defaulting to visible',
+        'Curtains: Extension context invalidated, defaulting to visible'
       );
       // Fallback: create with default theme
       createCurtain();
@@ -586,10 +664,26 @@
         sendResponse({ success: false });
         return true;
       }
-      const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
-      if (toggleBtn) {
-        toggleBtn.className = `position-${message.position}`;
+
+      if (message.position) {
+        buttonPosition = message.position;
+
+        const positionClass = `position-${buttonPosition}`;
+        const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
+        const hoverTrigger = shadowRoot.getElementById('curtain-hover-trigger');
+
+        if (toggleBtn) {
+          // Remove all position classes
+          toggleBtn.className = '';
+          // Add new position class (and preserve 'visible' class if it exists)
+          toggleBtn.classList.add(positionClass);
+        }
+
+        if (hoverTrigger) {
+          hoverTrigger.className = positionClass;
+        }
       }
+
       sendResponse({ success: true });
       return true;
     }

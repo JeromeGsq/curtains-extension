@@ -23,11 +23,11 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "assets/content.ts-BDH3aVHL.js"
-      ],
       "matches": [
         "<all_urls>"
+      ],
+      "js": [
+        "src/content.ts-loader.js"
       ],
       "run_at": "document_start",
       "all_frames": false
@@ -49,13 +49,21 @@
   },
   "web_accessible_resources": [
     {
+      "resources": [
+        "icons/visible-48.png",
+        "icons/hidden-48.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    },
+    {
       "matches": [
         "<all_urls>"
       ],
       "resources": [
-        "icons/visible-48.png",
-        "icons/hidden-48.png",
-        "assets/content.ts-BDH3aVHL.js"
+        "**/*",
+        "*"
       ],
       "use_dynamic_url": false
     }
