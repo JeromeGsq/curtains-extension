@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "package": "DATETIME=$(date +%Y_%m_%d_%H_%M) && vite build && git add -A && git commit -m \"release: $DATETIME\" && mkdir -p release && cd dist && zip -r ../release/curtains-$DATETIME.zip . && cd .. && echo \"Package created: release/curtains-$DATETIME.zip\"",
+    "package": "DATETIME=$(date +%Y_%m_%d_%H_%M) && vite build && git add -A && git commit -m \"release: $DATETIME\" && mkdir -p release && cd dist && zip -r ../release/curtains-$DATETIME.zip . -x '*.vite*' -x '*__MACOSX*' -x '*.DS_Store*' && cd .. && echo \"Package created: release/curtains-$DATETIME.zip\"",
     "lint": "biome check src/",
     "lint:fix": "biome check --write src/",
     "format": "biome format --write src/"
