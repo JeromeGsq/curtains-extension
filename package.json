@@ -1,6 +1,6 @@
 {
   "name": "curtains-extension",
-  "version": "2025.1013.173225",
+  "version": "2025.1013.173724",
   "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
   "main": "dist/manifest.json",
   "directories": {

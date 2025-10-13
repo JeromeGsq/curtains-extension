@@ -1,9 +1,8 @@
-// Display version (build date + commit hash)
+// Display version from manifest
 const versionElement = document.getElementById('version');
 if (versionElement) {
-  // Version will be injected at build time
-  const buildVersion = '__BUILD_VERSION__';
-  versionElement.textContent = buildVersion;
+  const manifest = chrome.runtime.getManifest();
+  versionElement.textContent = `v${manifest.version}`;
 }
 
 // Display the actual configured keyboard shortcut
