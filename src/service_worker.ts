@@ -69,6 +69,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else {
       sendResponse({ state: false });
     }
+  } else if (message.action === 'getTheme') {
+    // Return the saved theme preference
+    chrome.storage.local.get(['themePreference'], (result) => {
+      sendResponse({ theme: result.themePreference || 'system' });
+    });
+    return true; // Keep channel open for async response
   }
   return true; // Keep message channel open for async response
 });

@@ -1,6 +1,7 @@
 (() => {
   let curtainState: boolean | null = null; // null = unknown, true = shown, false = hidden
   let shadowRoot: ShadowRoot | null = null;
+  let themePreference: 'light' | 'dark' | 'system' = 'system';
 
   // Motivational phrases
   const motivationalPhrases = [
@@ -27,14 +28,13 @@
 
   // CSS styles (embedded in Shadow DOM)
   const styles = `
-    /* Curtain overlay */
+    /* Base styles */
     #curtain-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #2c2c2c;
       z-index: 2147483647;
       display: flex;
       align-items: center;
@@ -52,7 +52,6 @@
 
     #curtain-message {
       font-size: 28px;
-      color: #ffffff;
       text-align: center;
       line-height: 1.6;
       margin-bottom: 20px;
@@ -60,7 +59,6 @@
 
     #curtain-motivation {
       font-size: 16px;
-      color: #a0a0a0;
       font-style: italic;
       text-align: center;
       margin-bottom: 30px;
@@ -70,8 +68,6 @@
     }
 
     #curtain-resume-btn {
-      background: #e0e0e0;
-      color: #1a1a1a;
       border: none;
       padding: 12px 32px;
       font-size: 16px;
@@ -82,16 +78,11 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    #curtain-resume-btn:hover {
-      background: #f5f5f5;
-    }
-
     /* Docked toggle button */
     #curtain-toggle-btn {
       position: fixed;
       bottom: 0;
       left: 0;
-      background: rgba(0, 0, 0, 0.8);
       color: white;
       border: none;
       padding: 12px 16px;
@@ -108,13 +99,11 @@
     #curtain-toggle-btn:hover,
     #curtain-toggle-btn.visible {
       transform: translateX(0);
-      background: rgba(0, 0, 0, 0.95);
     }
 
     #curtain-toggle-btn img {
       width: 20px;
       height: 20px;
-      filter: invert(1);
     }
 
     /* Hover trigger area */
@@ -127,7 +116,162 @@
       z-index: 2147483647;
       pointer-events: auto;
     }
+
+    /* Light theme */
+    .theme-light #curtain-overlay {
+      background: #f5f5f5;
+    }
+
+    .theme-light #curtain-message {
+      color: #1a1a1a;
+    }
+
+    .theme-light #curtain-motivation {
+      color: #666666;
+    }
+
+    .theme-light #curtain-resume-btn {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .theme-light #curtain-resume-btn:hover {
+      background: #333333;
+    }
+
+    .theme-light #curtain-toggle-btn {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .theme-light #curtain-toggle-btn:hover,
+    .theme-light #curtain-toggle-btn.visible {
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    .theme-light #curtain-toggle-btn img {
+      filter: invert(1);
+    }
+
+    /* Dark theme */
+    .theme-dark #curtain-overlay {
+      background: #1a1a1a;
+    }
+
+    .theme-dark #curtain-message {
+      color: #ffffff;
+    }
+
+    .theme-dark #curtain-motivation {
+      color: #a0a0a0;
+    }
+
+    .theme-dark #curtain-resume-btn {
+      background: #e0e0e0;
+      color: #1a1a1a;
+    }
+
+    .theme-dark #curtain-resume-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .theme-dark #curtain-toggle-btn {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .theme-dark #curtain-toggle-btn:hover,
+    .theme-dark #curtain-toggle-btn.visible {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .theme-dark #curtain-toggle-btn img {
+      filter: invert(0);
+    }
+
+    /* System theme - follows OS preference */
+    .theme-system #curtain-overlay {
+      background: #f5f5f5;
+    }
+
+    .theme-system #curtain-message {
+      color: #1a1a1a;
+    }
+
+    .theme-system #curtain-motivation {
+      color: #666666;
+    }
+
+    .theme-system #curtain-resume-btn {
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .theme-system #curtain-resume-btn:hover {
+      background: #333333;
+    }
+
+    .theme-system #curtain-toggle-btn {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .theme-system #curtain-toggle-btn:hover,
+    .theme-system #curtain-toggle-btn.visible {
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    .theme-system #curtain-toggle-btn img {
+      filter: invert(1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .theme-system #curtain-overlay {
+        background: #1a1a1a;
+      }
+
+      .theme-system #curtain-message {
+        color: #ffffff;
+      }
+
+      .theme-system #curtain-motivation {
+        color: #a0a0a0;
+      }
+
+      .theme-system #curtain-resume-btn {
+        background: #e0e0e0;
+        color: #1a1a1a;
+      }
+
+      .theme-system #curtain-resume-btn:hover {
+        background: #f5f5f5;
+      }
+
+      .theme-system #curtain-toggle-btn {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .theme-system #curtain-toggle-btn:hover,
+      .theme-system #curtain-toggle-btn.visible {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .theme-system #curtain-toggle-btn img {
+        filter: invert(0);
+      }
+    }
   `;
+
+  // Apply theme to shadow root
+  function applyTheme(theme: 'light' | 'dark' | 'system'): void {
+    if (!shadowRoot) return;
+    themePreference = theme;
+
+    // Find the theme container (div that wraps the overlay)
+    const container = shadowRoot.querySelector('div[class*="theme-"]');
+
+    if (container) {
+      container.classList.remove('theme-light', 'theme-dark', 'theme-system');
+      container.classList.add(`theme-${theme}`);
+    }
+  }
 
   // Create curtain overlay (start hidden by default to prevent flash)
   function createCurtain(): void {
@@ -146,6 +290,10 @@
     const styleElement = document.createElement('style');
     styleElement.textContent = styles;
     shadowRoot.appendChild(styleElement);
+
+    // Create container with theme class
+    const container = document.createElement('div');
+    container.classList.add(`theme-${themePreference}`);
 
     // Create overlay
     const overlay = document.createElement('div');
@@ -186,7 +334,8 @@
     contentDiv.appendChild(motivationDiv);
     contentDiv.appendChild(resumeBtn);
     overlay.appendChild(contentDiv);
-    shadowRoot.appendChild(overlay);
+    container.appendChild(overlay);
+    shadowRoot.appendChild(container);
     document.documentElement.appendChild(shadowHost);
   }
 
@@ -201,6 +350,10 @@
   // Create docked toggle button with hover trigger
   function createToggleButton(): void {
     if (!shadowRoot || shadowRoot.getElementById('curtain-toggle-btn')) return;
+
+    // Find the theme container
+    const container = shadowRoot.querySelector('div[class*="theme-"]');
+    if (!container) return;
 
     // Create hover trigger area
     const hoverTrigger = document.createElement('div');
@@ -230,8 +383,8 @@
       toggleBtn.classList.remove('visible');
     });
 
-    shadowRoot.appendChild(hoverTrigger);
-    shadowRoot.appendChild(toggleBtn);
+    container.appendChild(hoverTrigger);
+    container.appendChild(toggleBtn);
 
     toggleBtn.addEventListener('click', () => {
       toggleCurtain();
@@ -336,41 +489,52 @@
 
   // Initialize curtain based on saved state
   function initializeCurtain(): void {
-    createCurtain();
-    createToggleButton();
-
-    // Request saved state from service worker
+    // First, load theme preference
     try {
-      chrome.runtime.sendMessage(
-        {
-          action: 'getState',
-          url: window.location.href,
-        },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            console.log(
-              'Curtains: Extension context invalidated, defaulting to visible',
-            );
-            hideCurtain(true);
-            return;
-          }
-          if (response && response.state !== undefined) {
-            curtainState = response.state;
-            if (curtainState) {
-              showCurtain();
+      chrome.runtime.sendMessage({ action: 'getTheme' }, (themeResponse) => {
+        if (themeResponse && themeResponse.theme) {
+          themePreference = themeResponse.theme;
+        }
+
+        // Now create curtain with the correct theme
+        createCurtain();
+        createToggleButton();
+
+        // Request saved state from service worker
+        chrome.runtime.sendMessage(
+          {
+            action: 'getState',
+            url: window.location.href,
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              console.log(
+                'Curtains: Extension context invalidated, defaulting to visible',
+              );
+              hideCurtain(true);
+              return;
+            }
+            if (response && response.state !== undefined) {
+              curtainState = response.state;
+              if (curtainState) {
+                showCurtain();
+              } else {
+                hideCurtain(true);
+              }
             } else {
+              // Default: hide curtain (show website)
               hideCurtain(true);
             }
-          } else {
-            // Default: hide curtain (show website)
-            hideCurtain(true);
-          }
-        },
-      );
+          },
+        );
+      });
     } catch (_e) {
       console.log(
         'Curtains: Extension context invalidated, defaulting to visible',
       );
+      // Fallback: create with default theme
+      createCurtain();
+      createToggleButton();
       hideCurtain(true);
     }
   }
@@ -380,6 +544,7 @@
     if (message.action === 'toggleCurtain') {
       toggleCurtain();
       sendResponse({ success: true });
+      return true;
     } else if (message.action === 'updateState') {
       // Update curtain state when another tab with same domain toggles
       // DON'T send message back to avoid infinite loop
@@ -405,18 +570,30 @@
         document.body.style.overflow = '';
       }
       sendResponse({ success: true });
+      return true;
+    } else if (message.action === 'updateTheme') {
+      // Update theme when user changes preference in popup
+      if (message.theme) {
+        applyTheme(message.theme);
+        sendResponse({ success: true });
+      } else {
+        sendResponse({ success: false });
+      }
+      return true;
     } else if (message.action === 'updateButtonPosition') {
       // Update button position
       if (!shadowRoot) {
         sendResponse({ success: false });
-        return;
+        return true;
       }
       const toggleBtn = shadowRoot.getElementById('curtain-toggle-btn');
       if (toggleBtn) {
         toggleBtn.className = `position-${message.position}`;
       }
       sendResponse({ success: true });
+      return true;
     }
+    return true;
   });
 
   // Initialize when DOM is ready

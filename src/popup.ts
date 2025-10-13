@@ -1,45 +1,70 @@
-// Detect platform for keyboard shortcut display
-const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-const shortcutText = isMac ? 'Command+Shift+H' : 'Ctrl+Shift+H';
+// Display the actual configured keyboard shortcut
 const shortcutElement = document.getElementById('shortcut');
 if (shortcutElement) {
-  shortcutElement.textContent = shortcutText;
+  chrome.commands.getAll((commands) => {
+    const toggleCommand = commands.find((cmd) => cmd.name === 'toggle-curtain');
+
+    if (toggleCommand) {
+      if (toggleCommand.shortcut) {
+        // Convert symbols to text and add separators
+        const formatted = toggleCommand.shortcut
+          .replace(/⌘/g, '+CMD+')
+          .replace(/⇧/g, '+SHIFT+')
+          .replace(/⌥/g, '+OPTION+')
+          .replace(/⌃/g, '+CTRL+')
+          .replace(/\+\+/g, '+') // Remove double +
+          .replace(/^\+/, '') // Remove leading +
+          .replace(/\+$/, ''); // Remove trailing +
+        shortcutElement.textContent = formatted;
+      } else {
+        // Show suggested key if no shortcut is set
+        shortcutElement.textContent = 'Not configured - click below to set';
+      }
+    } else {
+      shortcutElement.textContent = 'Command not found';
+    }
+  });
 }
 
-// Get current tab state and update UI
-chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  if (tabs[0]) {
-    chrome.runtime.sendMessage(
-      { action: 'getState', url: tabs[0].url },
-      (response) => {
-        const statusEl = document.getElementById('status');
-        const isBlocked = response && response.state === true;
+// Handle configure shortcut button
+const configureShortcutBtn = document.getElementById('configureShortcut');
+if (configureShortcutBtn) {
+  configureShortcutBtn.addEventListener('click', () => {
+    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  });
+}
 
-        // Extract domain for display
-        let domain = '';
-        try {
-          const url = tabs[0].url;
-          if (url) {
-            const urlObj = new URL(url);
-            domain = urlObj.hostname;
-          }
-        } catch (_e) {
-          domain = 'this page';
-        }
+// Load and display current theme preference
+const themeSelect = document.getElementById('themeSelect') as HTMLSelectElement;
+if (themeSelect) {
+  chrome.storage.local.get(['themePreference'], (result) => {
+    const theme = result.themePreference || 'system';
+    themeSelect.value = theme;
+  });
 
-        if (statusEl) {
-          if (isBlocked) {
-            statusEl.textContent = `🚫 ${domain} is blocked`;
-            statusEl.className = 'status blocked';
-          } else {
-            statusEl.textContent = `✓ ${domain} is visible`;
-            statusEl.className = 'status visible';
+  // Handle theme selection changes
+  themeSelect.addEventListener('change', () => {
+    const theme = themeSelect.value;
+
+    // Save theme preference to storage
+    chrome.storage.local.set({ themePreference: theme }, () => {
+      // Notify all tabs to update their theme
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach((tab) => {
+          if (tab.id) {
+            chrome.tabs
+              .sendMessage(tab.id, {
+                action: 'updateTheme',
+                theme: theme,
+              })
+              .catch(() => {}); // Ignore errors for tabs without content script
           }
-        }
-      },
-    );
-  }
-});
+        });
+      });
+    });
+  });
+}
+
 
 // Toggle button handler
 const toggleBtn = document.getElementById('toggleBtn');
