@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Curtains - Focus & Block Distractions",
-  "version": "2025.1013.1731",
+  "version": "2025.1013.173225",
   "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
   "homepage_url": "https://github.com/JeromeGsq/curtains-extension",
   "permissions": [

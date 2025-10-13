@@ -1,6 +1,6 @@
 {
   "name": "curtains-extension",
-  "version": "2025.1013.1731",
+  "version": "2025.1013.173225",
   "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
   "main": "dist/manifest.json",
   "directories": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "package": "DATETIME=$(date +%Y_%m_%d_%H_%M) && SEMVER=$(date +%Y.%-m%d.%-H%M) && npm version $SEMVER --no-git-tag-version && vite build && git add -A && git commit -m \"release: $DATETIME\" && mkdir -p release && cd dist && zip -r ../release/curtains-$DATETIME.zip . -x '*.vite*' -x '*__MACOSX*' -x '*.DS_Store*' && cd .. && echo \"Package created: release/curtains-$DATETIME.zip\"",
+    "package": "DATETIME=$(date +%Y_%m_%d_%H_%M_%S) && SEMVER=$(date +%Y.%-m%d.%-H%M%S) && npm version $SEMVER --no-git-tag-version --allow-same-version && vite build && git add -A && git commit -m \"release: $DATETIME\" && mkdir -p release && cd dist && zip -r ../release/curtains-$DATETIME.zip . -x '*.vite*' -x '*__MACOSX*' -x '*.DS_Store*' && cd .. && echo \"Package created: release/curtains-$DATETIME.zip\"",
     "lint": "biome check src/",
     "lint:fix": "biome check --write src/",
     "format": "biome format --write src/"
