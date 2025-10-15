@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Curtains - Focus & Block Distractions",
-  "version": "2025.1014.533",
+  "version": "2025.1015.151028",
   "description": "Block distracting websites with a peaceful curtain overlay. Get motivated, stay focused, and control your browsing time.",
   "homepage_url": "https://github.com/JeromeGsq/curtains-extension",
   "permissions": [
@@ -21,11 +21,11 @@
   },
   "content_scripts": [
     {
+      "js": [
+        "assets/content.ts-BgP6thaU.js"
+      ],
       "matches": [
         "<all_urls>"
-      ],
-      "js": [
-        "src/content.ts-loader.js"
       ],
       "run_at": "document_start",
       "all_frames": false
@@ -47,21 +47,13 @@
   },
   "web_accessible_resources": [
     {
+      "matches": [
+        "<all_urls>"
+      ],
       "resources": [
         "icons/visible-48.png",
-        "icons/hidden-48.png"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    },
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "resources": [
-        "**/*",
-        "*"
+        "icons/hidden-48.png",
+        "assets/content.ts-BgP6thaU.js"
       ],
       "use_dynamic_url": false
     }

@@ -1,12 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Vite Dev Mode</title>
-    <script src="/assets/loading-page-1924caaa.js" type="module"></script>
-  </head>
-  <body
-    style="font-family: Arial, sans-serif; padding: 20px; text-align: center"
-  >
-    <h1>Vite Dev Mode</h1>
-  </body>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Curtains - Focus & Block Distractions</title>
+  <style>
+    body {
+      width: 600px;
+      min-height: 400px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+    }
+
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+ 
+    h1 {
+      font-size: 20px;
+      margin: 0 0 15px 0;
+      color: #333;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #666;
+      margin: 0 0 15px 0;
+    }
+
+    .shortcut {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .shortcut-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .shortcut-key {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .button {
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .button:hover {
+      background: #d0d0d0;
+    }
+
+    .status {
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    .status.blocked {
+      background: #ffe6e6;
+      color: #c33;
+    }
+
+    .status.visible {
+      background: #e6f7e6;
+      color: #3c3;
+    }
+
+    .corner-btn:hover {
+      background: #f0f0f0 !important;
+      transform: scale(1.1);
+    }
+
+    .corner-btn.selected {
+      background: #e0e0e0 !important;
+      border-color: #999 !important;
+    }
+
+    .corner-btn.selected img {
+      filter: invert(0) !important;
+    }
+
+    .corner-btn.selected:hover {
+      background: #d0d0d0 !important;
+    }
+
+    .theme-btn:hover {
+      background: #f5f5f5 !important;
+    }
+
+    .theme-btn.selected {
+      background: #e0e0e0 !important;
+      color: #333 !important;
+      border-color: #999 !important;
+    }
+
+    .theme-btn.selected:hover {
+      background: #d0d0d0 !important;
+    }
+
+    #configureShortcut:hover {
+      background: #f5f5f5 !important;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/popup.html-B1tEztLl.js"></script>
+</head>
+<body>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center;">
+      <img src="/assets/icon128-BJZn1hW_.png" alt="Curtains" style="width: 32px; height: 32px; margin-right: 10px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));">
+      <h1 style="margin: 0;">Curtains - Focus & Block Distractions</h1>
+    </div>
+    <span id="version" style="font-size: 12px; color: #999;"></span>
+  </div>
+
+  <div class="container">
+    <div class="left-column">
+      <p style="margin: 0 0 20px 0;">Block distracting websites so you can focus on your work.</p>
+
+      <div style="margin-top: auto; padding-top: 20px; text-align: center;">
+        <p style="font-size: 13px; color: #666; margin: 0 0 12px 0;">
+          Enjoying Curtains? Support the development with a coffee!
+        </p>
+        <a href="https://buymeacoffee.com/jeromegsq" target="_blank" style="display: inline-block; text-decoration: none; background: #FFDD00; color: #000; padding: 10px 15px; border-radius: 6px; font-size: 14px; font-weight: 500; transition: background 0.2s;">
+          ☕ Buy Me a Coffee
+        </a>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="shortcut">
+        <div class="shortcut-label">Eye Button Position</div>
+        <div id="positionSelector" style="margin-top: 12px; display: flex; justify-content: center; align-items: center; padding: 20px;">
+          <div style="position: relative; width: 200px; height: 120px; border: 3px solid #ddd; border-radius: 8px; background: #fafafa;">
+            <!-- Top Left -->
+            <button class="corner-btn" data-position="top-left" style="position: absolute; top: 5px; left: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Top Right -->
+            <button class="corner-btn" data-position="top-right" style="position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Bottom Left -->
+            <button class="corner-btn" data-position="bottom-left" style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+            <!-- Bottom Right -->
+            <button class="corner-btn" data-position="bottom-right" style="position: absolute; bottom: 5px; right: 5px; width: 30px; height: 30px; border: 3px solid #ddd; background: white; cursor: pointer; border-radius: 6px; transition: all 0.2s; padding: 4px; display: flex; align-items: center; justify-content: center;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAD/h4/MvwAAAAlwSFlzAAAOfwAADn8B4hea3gAAAAd0SU1FB+kKBgkXHIwXRMEAAAJsSURBVFjD7ZbPShtRFMZ/plq7SVJExiBuNMFC911FJIKYlwi4rJV0ofgEgkQT3egTiDvdKLqJxNZNV92HRlBKDVitICYx1kIzXWQyTpxzJ3/adDVnNgPnO98999x7v3PANddc67h1NYV6hp9++vHzAvjJLddcc8vvv1/Ay2vCvOEVAbw8xwNU+EWR7+T4zCeyFNvdXYh5jrlBd/huOGaOUOvkoyxz5kht/c5IMNo8eR8LnAo095yTJUuee8F7ygJ9zdCPcUTFFp5jhSmCaGiEiJIkZ8NUyDDmTN5LnAtbYIFVhm3YYVIUbNgL4vSqS7PBgy3kkhgeEe8hxqUN/8C6XKpBdoTKFog57jkm7EJnm8GnwCEOxPuxasneywTvmGWSl5ZdpMS4fYas9AH2RFjOUvswae7Q0SnzgYjlLHJi7C4DNYiPLcX9XrHQ17+Kb5YlkoroTbwAPSSEa1m991NmcdI270ezUFHxXehUWKIb3lNSZHBO0KCICJgyk6ak5BUMReLwQykAWTSDYkb0zxpejayS48qD3rbUNxPZ5WGRksLpw2f8nVC2ect8MU/Ip2C4YxG6WVIectQA+snYvIcmrfqQE/RUM9hUVDBp5jLO1ycCHW54TbcedzbAbsOHNk7GeGgl0hb6EU7E2D0C9VKxL8JSFqnwMcFbZohUH5AhFWti3EG9VFTFbrsNsZumKETt2MWuKtfrLcr1NFeCXG+oO5uq4aSEhjPCmpC9Y8OptcyM2DKTRAmhoREkSlI42gpHjVpmo6af/xdNvza2JFoaW5ZbGVseB6+5pgaveafBq+OjY8eHX9dcc+0/2B8xtp4d9IXcXQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNS0xMC0wNlQwOToyMTowOSswMDowMNRAXlQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjUtMTAtMDZUMDk6MjE6MDkrMDA6MDClHeboAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI1LTEwLTA2VDA5OjIzOjI4KzAwOjAwEq8bwwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" style="width: 20px; height: 20px; filter: invert(1);" alt="eye">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shortcut">
+        <div class="shortcut-label">Theme</div>
+        <div id="themeSelector" style="margin-top: 12px; display: flex; gap: 0; border: 2px solid #ddd; border-radius: 8px; overflow: hidden;">
+          <button class="theme-btn" data-theme="light" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; border-right: 1px solid #ddd; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            Light
+          </button>
+          <button class="theme-btn" data-theme="system" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; border-right: 1px solid #ddd; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            System
+          </button>
+          <button class="theme-btn" data-theme="dark" style="flex: 1; padding: 10px 16px; font-size: 14px; font-weight: 500; border: none; background: white; cursor: pointer; transition: all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+            Dark
+          </button>
+        </div>
+      </div>
+
+      <div class="shortcut">
+        <div class="shortcut-label">Keyboard Shortcut</div>
+        <div class="shortcut-key" id="shortcut">Ctrl+Shift+H</div>
+        <button id="configureShortcut" style="margin-top: 8px; padding: 10px 16px; font-size: 14px; font-weight: 500; background: white; color: #333; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.2s; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+          Configure Shortcut
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
 </html>
